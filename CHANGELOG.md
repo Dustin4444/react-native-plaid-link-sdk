@@ -76,6 +76,8 @@ code; Expo apps should use a development build or another custom native runtime.
   `PlaidLink`, and `usePlaidEmitter` APIs with session objects:
   `createPlaidLinkSession`, `createPlaidLayerSession`, and
   `createPlaidHeadlessSession`.
+- Removes the global `destroy` function. Each v13 flow is a discrete session
+  object, so create a new session instead of clearing and reusing one.
 - Adds `PlaidEmbeddedSearchView` for Embedded Search on iOS and Android.
 - Adds Headless Link support through `createPlaidHeadlessSession`.
 - Updates Layer to use `createPlaidLayerSession`, `session.open()`, and

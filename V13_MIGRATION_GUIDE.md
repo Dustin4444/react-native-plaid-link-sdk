@@ -434,6 +434,39 @@ only available on iOS.
 
 ## Other Breaking Changes
 
+### `destroy` removed
+
+The global `destroy` function has been removed. In v11 and v12 it cleared
+native state from a previously opened session (Android only) and was mainly
+used with Layer when calling `create` more than once before `submit`. In v13
+each flow is a discrete session object returned by `createPlaidLinkSession`,
+`createPlaidLayerSession`, or `createPlaidHeadlessSession`, so there is no
+shared state to clear — create a new session instead of resetting a previous
+one.
+
+Before:
+
+```ts
+import { create, destroy, submit } from "react-native-plaid-link-sdk";
+
+create(tokenConfiguration1);
+await destroy(); // clear the previous session's state
+create(tokenConfiguration2);
+submit({ phoneNumber: "415-555-0015" });
+```
+
+After:
+
+```ts
+import { createPlaidLayerSession } from "react-native-plaid-link-sdk";
+
+const session = await createPlaidLayerSession(tokenConfiguration2);
+await session.submit({ phoneNumber: "415-555-0015" });
+```
+
+Action required: remove any calls to `destroy` and create a fresh session for
+each Link flow instead of clearing and reusing a previous one.
+
 ### `LinkAccountSubtypeInvestment.SIIP` renamed to `SIPP`
 
 The misspelled investment account subtype constant
