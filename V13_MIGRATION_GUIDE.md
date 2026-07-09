@@ -434,6 +434,82 @@ only available on iOS.
 
 ## Other Breaking Changes
 
+### `destroy` removed
+
+The global `destroy` function has been removed. In v11 and v12 it cleared
+native state from a previously opened session (Android only) and was mainly
+used with Layer when calling `create` more than once before `submit`. In v13
+each flow is a discrete session object returned by `createPlaidLinkSession`,
+`createPlaidLayerSession`, or `createPlaidHeadlessSession`, so there is no
+shared state to clear — create a new session instead of resetting a previous
+one.
+
+Before:
+
+```ts
+import { create, destroy, submit } from "react-native-plaid-link-sdk";
+
+create(tokenConfiguration1);
+await destroy(); // clear the previous session's state
+create(tokenConfiguration2);
+submit({ phoneNumber: "415-555-0015" });
+```
+
+After:
+
+```ts
+import { createPlaidLayerSession } from "react-native-plaid-link-sdk";
+
+const session = await createPlaidLayerSession(tokenConfiguration2);
+await session.submit({ phoneNumber: "415-555-0015" });
+```
+
+Action required: remove any calls to `destroy` and create a fresh session for
+each Link flow instead of clearing and reusing a previous one.
+
+### `dismissLink` removed
+
+The global `dismissLink` function has been removed. In v11 and v12 it
+programmatically dismissed the Link UI (iOS only; a no-op on Android). v13 has
+no equivalent — Link is dismissed when the user completes or exits the flow,
+which you observe through the `onSuccess` and `onExit` callbacks passed to the
+session.
+
+Action required: remove any calls to `dismissLink`.
+
+### `logLevel`, `LinkLogLevel`, and `noLoadingState` removed
+
+The `logLevel` and `noLoadingState` configuration options, and the
+`LinkLogLevel` enum, have been removed. A v13 session configuration is just a
+`token` plus the `onSuccess`, `onExit`, `onEvent`, and optional `onLoad`
+callbacks. `noLoadingState` is superseded by `createPlaidHeadlessSession`,
+which runs without SDK-provided UI.
+
+Before:
+
+```ts
+create({
+  token: "#GENERATED_LINK_TOKEN#",
+  logLevel: LinkLogLevel.ERROR,
+  noLoadingState: false,
+});
+```
+
+After:
+
+```ts
+const session = await createPlaidLinkSession({
+  token: "#GENERATED_LINK_TOKEN#",
+  onSuccess,
+  onExit,
+  onEvent,
+});
+```
+
+Action required: remove `logLevel`, `LinkLogLevel`, and `noLoadingState` from
+your configuration. If you used `noLoadingState` for a UI-less flow, use
+`createPlaidHeadlessSession` instead.
+
 ### `LinkAccountSubtypeInvestment.SIIP` renamed to `SIPP`
 
 The misspelled investment account subtype constant
