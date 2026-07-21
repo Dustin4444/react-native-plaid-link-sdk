@@ -1,5 +1,20 @@
 # RELEASES
 
+## LinkKit V13.0.3 — 2026-07-21
+
+### Changes
+
+- Updates the bundled iOS SDK to LinkKit 7.0.4.
+- Updates Android integration to `com.plaid.link:sdk-core:6.1.0`.
+
+### Android
+
+Android SDK [6.1.0](https://github.com/plaid/plaid-link-android/releases/tag/v6.1.0)
+
+### iOS
+
+iOS SDK [7.0.4](https://github.com/plaid/plaid-link-ios/releases/tag/7.0.4)
+
 ## LinkKit V13.0.2 — 2026-07-01
 
 ### Changes
